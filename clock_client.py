@@ -5,9 +5,9 @@ import sys
 import socket
 import time
 from threading import Thread
-import ConfigParser
+import configparser
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'clock.cfg'))
 
 cid = config.getint('led_client', 'cid')
@@ -31,18 +31,18 @@ class ClockClient(Thread):
 
 	def connect(self):
 		# ***** connect to server *****
-		s = socket.socket()         # Create a socket object
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
 		s.settimeout(5)             # timeout = 5s
 
 		while True:
 			try:
-				print '> connect to :', self._host, ',', self._port
+				print('> connect to :', self._host, ',', self._port)
 
 				s.connect((self._host, self._port))
 
 				# ***** wait for hello message *****
 				msg = s.recv(1024)
-				print '>', msg
+				print('>', msg)
 
 				if msg != 'hello':
 					s.close
@@ -54,7 +54,7 @@ class ClockClient(Thread):
 				break
 
 			except socket.error as exc:
-				print '> SOCKET ERROR : ', exc
+				print('> SOCKET ERROR : ', exc)
 		
 			time.sleep(5)
 
@@ -74,14 +74,14 @@ class ClockClient(Thread):
 				msg = s.recv(1024)
 
 				if msg == '':
-					print 'SOCKET ERROR : socket closed'
+					print('SOCKET ERROR : socket closed')
 					s.close()
 
 					s = self.connect()
 					continue
 
 			except socket.error as exc:
-				print 'SOCKET ERROR : ', exc
+				print('SOCKET ERROR : ', exc)
 				s.close()
 
 				s = self.connect()
@@ -94,7 +94,7 @@ class ClockClient(Thread):
 
 			# ***** other = led command *****
 			os.popen('rgb %s' % (msg)) 
-			#print '> led :', msg
+			#print('> led :', msg)
 
 		s.close()                     # Close the socket when done
 

@@ -3,9 +3,9 @@
 import os
 import sys
 import socket
-import ConfigParser
+import configparser
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'clock.cfg'))
 
 host = config.get('led_server', 'host')

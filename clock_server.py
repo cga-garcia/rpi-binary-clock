@@ -5,7 +5,7 @@ import sys
 import socket
 import time
 from threading import Thread
-import ConfigParser
+import configparser
 
 # ***** controller class *****
 
@@ -59,12 +59,12 @@ class ClockServer(Thread):
 				elif disp == 'second' and crt_sec_bool == 1:
 					msg = 'red'
 
-				print '>', k, msg
+				print('>', k, msg)
 
 				try:
 					c.sendall(msg)
 				except socket.error as exc:
-					print 'SOCKET ERROR :', exc
+					print('SOCKET ERROR :', exc)
 					self.unregister(k)
 
 			time.sleep(0.5)
@@ -81,15 +81,14 @@ class ClockServer(Thread):
 # ***************************
 # ***************************
 
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 config.read(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'clock.cfg'))
 
 # ***** init socket *****
 host = config.get('led_server', 'host')        # Get local machine name
 port = config.getint('led_server', 'port')     # Reserve a port for your service.
 
-s = socket.socket()         # Create a socket object
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)         # Create a socket object
 s.bind((host, port))        # Bind to the port
 
 s.listen(5)                 # Now wait for client connection.
@@ -101,7 +100,7 @@ is_started = True
 while is_started:
 
 	try:
-		print '> listen ', host, ',', port
+		print('> listen ', host, ',', port)
 		c, addr = s.accept()     # Establish connection with client.
 
 		c.sendall('hello')       # send hello message
@@ -109,15 +108,15 @@ while is_started:
 		cid = c.recv(1024)       # receive cid from client
 
 		if cid == 'stop':
-			print '>', cid
+			print('>', cid)
 			is_started = False
 			continue
 
-		print '> register client', cid, 'from', addr
+		print('> register client', cid, 'from', addr)
 		ctrl.register(cid, c)
 
 	except socket.error as exc:
-		print '> SOCKET ERROR :', exc
+		print('> SOCKET ERROR :', exc)
 
 c.close()
 ctrl.stop()

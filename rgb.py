@@ -17,8 +17,8 @@ args = parser.parse_args()
 
 # LED pin mapping.
 red = 22
-green = 23
-blue = 24
+green = 17
+blue = 27
 
 # GPIO Setup.
 GPIO.setmode(GPIO.BCM)
